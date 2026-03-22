@@ -269,6 +269,56 @@ input,textarea{font-family:inherit;outline:none;border:none}
 .spin{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--purple);
   border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* For You */
+.fy{max-width:700px;margin:0 auto;padding:32px 24px;animation:fadeIn .5s}
+.fy-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.fy-title{font-size:20px;font-weight:600}
+.fy-ref{padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s}
+.fy-ref:hover{border-color:rgba(139,92,246,.3);color:#fff}
+.fy-meta{font-size:11px;color:var(--text4);margin-right:12px}
+.fy-sec{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#444;
+  margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.04)}
+.fy-pulse{font-size:16px;color:#ccc;line-height:1.7;padding:20px 24px;background:var(--sb);border-radius:12px;border-left:3px solid var(--purple)}
+.fy-card{background:#111;border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:10px}
+.fy-card-dom{font-size:11px;color:var(--purple);font-weight:600;letter-spacing:.5px;margin-bottom:8px}
+.fy-card-txt{font-size:14px;color:#ccc;line-height:1.6}
+.fy-card-ev{font-size:12px;color:var(--text3);margin-top:8px;font-style:italic}
+.fy-card-hi{border-left:3px solid var(--red)}.fy-card-md{border-left:3px solid var(--amber)}.fy-card-lo{border-left:3px solid var(--green)}
+.fy-pr{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.fy-pr-name{flex:1;color:#fff;font-weight:500;font-size:14px}
+.fy-pr-rel{flex:1;color:var(--text2);font-size:12px}
+.fy-pr-tr{font-size:11px;padding:3px 10px;border-radius:12px}
+.tr-strengthening{background:rgba(34,197,94,.1);color:var(--green)}
+.tr-stable{background:rgba(59,130,246,.1);color:var(--blue)}
+.tr-fading{background:rgba(234,179,8,.1);color:var(--amber)}
+.tr-neglected{background:rgba(239,68,68,.1);color:var(--red)}
+.fy-pr-an{font-size:12px;color:var(--text2);padding:4px 0 0;line-height:1.4}
+.fy-pr-act{font-size:12px;color:var(--purple);padding:4px 0 8px}
+.fy-gc{padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.fy-gc-hd{display:flex;justify-content:space-between;align-items:center}
+.fy-gc-name{color:#fff;font-weight:500;font-size:14px}
+.fy-gc-st{font-size:11px;padding:3px 10px;border-radius:12px}
+.st-on_track{background:rgba(34,197,94,.1);color:var(--green)}
+.st-falling_behind{background:rgba(234,179,8,.1);color:var(--amber)}
+.st-stalled{background:rgba(239,68,68,.1);color:var(--red)}
+.st-just_started{background:rgba(59,130,246,.1);color:var(--blue)}
+.fy-gc-as{font-size:13px;color:var(--text2);margin-top:6px;line-height:1.5}
+.fy-bl{background:var(--sb);border:1px solid rgba(139,92,246,.15);border-radius:12px;padding:18px 22px;margin-bottom:10px}
+.fy-bl-tl{font-size:14px;font-weight:600;color:var(--purple);margin-bottom:8px}
+.fy-bl-txt{font-size:13px;color:#ccc;line-height:1.6}
+.fy-bl-q{font-size:13px;color:var(--amber);margin-top:10px;font-style:italic}
+.fy-act{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.fy-act-t{min-width:100px;font-size:12px;font-weight:600;color:var(--purple)}
+.fy-act-tx{font-size:14px;color:#fff}
+.fy-act-r{font-size:12px;color:var(--text3);margin-top:4px}
+.fy-act-critical .fy-act-t{color:var(--red)}.fy-act-high .fy-act-t{color:var(--amber)}
+.fy-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.fy-chip{padding:10px 18px;background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  color:#ccc;font-size:13px;cursor:pointer;transition:all .2s}
+.fy-chip:hover{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.3);color:#fff}
+.fy-load{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px}
+.fy-load-t{color:var(--text3);font-size:14px}.fy-load-s{color:var(--text4);font-size:12px}
+
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
 /* ═══ MOBILE ═══ */
@@ -331,6 +381,8 @@ input,textarea{font-family:inherit;outline:none;border:none}
   <nav class="sb-nav">
     <button class="sb-i on" data-v="chat" onclick="go('chat')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Chat</button>
+    <button class="sb-i" data-v="foryou" onclick="go('foryou')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>For You</button>
     <button class="sb-i" data-v="graph" onclick="go('graph')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><path d="M14.5 9.5l3-3M9.5 14.5l-3 3"/></svg>Memory Graph</button>
     <button class="sb-i" data-v="profile" onclick="go('profile')">
@@ -394,6 +446,11 @@ input,textarea{font-family:inherit;outline:none;border:none}
 
   <!-- Graph -->
   <div id="gv"><iframe id="gf" sandbox="allow-scripts allow-same-origin"></iframe></div>
+
+  <!-- For You view -->
+  <div id="fyv" style="display:none;position:absolute;inset:0;overflow-y:auto;background:var(--bg)">
+    <div id="fy-content"></div>
+  </div>
 
   <!-- Right panel -->
   <div id="rp">
@@ -484,13 +541,15 @@ function go(v){
   document.querySelectorAll(".sb-i[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.getElementById("cv").style.display=v==="chat"?"flex":"none";
   document.getElementById("gv").style.display=v==="graph"?"block":"none";
+  document.getElementById("fyv").style.display=v==="foryou"?"block":"none";
   closeP();
-  if(v==="graph")loadGraph();
+  if(v==="foryou")loadForYou();
+  else if(v==="graph")loadGraph();
   else if(v==="profile")openP("Profile",loadProfile);
   else if(v==="emotions")openP("Emotions",loadEmotions);
   else if(v==="patterns")openP("Patterns",loadPatterns);
   else if(v==="stats")openP("Stats",loadStats);
-  if(v!=="chat"&&v!=="graph")document.getElementById("cv").style.display="flex";
+  if(!["chat","graph","foryou"].includes(v))document.getElementById("cv").style.display="flex";
   if(innerWidth<=768)document.getElementById("sb").classList.add("shut");
 }
 function openP(t,fn){
@@ -706,6 +765,55 @@ async function doDream(){
 async function doForget(){
   if(!confirm("Permanently erase ALL memories?"))return;
   await api("POST","/api/forget");resetChat();showToast("Memory cleared");
+}
+
+/* ── For You ── */
+function timeAgo(iso){
+  const d=Date.now()-new Date(iso).getTime();
+  const m=Math.floor(d/60000);if(m<60)return m+"m ago";
+  const h=Math.floor(m/60);if(h<24)return h+"h ago";
+  return Math.floor(h/24)+"d ago";
+}
+async function loadForYou(){
+  const el=document.getElementById("fy-content");
+  el.innerHTML='<div class="fy"><div class="fy-load"><div class="spin"></div><div class="fy-load-t">Anant is analyzing your life...</div><div class="fy-load-s">Running multi-pass reasoning</div></div></div>';
+  const d=await api("GET","/api/foryou");
+  if(!d||!d.life_pulse){el.innerHTML='<div class="fy"><div style="text-align:center;padding:60px;color:#555">Not enough data yet. Chat with Anant to build your life model.</div></div>';return}
+  let h='<div class="fy">';
+  h+=`<div class="fy-hd"><div class="fy-title">For You</div><div>${d.generated_at?'<span class="fy-meta">Updated '+timeAgo(d.generated_at)+'</span>':''}<button class="fy-ref" onclick="refreshFY()">↻ Refresh</button></div></div>`;
+  h+='<div class="fy-sec">Life Pulse</div>';
+  h+=`<div class="fy-pulse">${d.life_pulse}</div>`;
+  if(d.cross_domain_insights&&d.cross_domain_insights.length){
+    h+='<div class="fy-sec">What Anant Sees</div>';
+    d.cross_domain_insights.forEach(i=>{const s=i.severity||"low";
+      h+=`<div class="fy-card fy-card-${s==="high"?"hi":s==="medium"?"md":"lo"}"><div class="fy-card-dom">${(i.domains||[]).join(" × ").toUpperCase()}</div><div class="fy-card-txt">${i.insight}</div>${i.evidence?'<div class="fy-card-ev">'+i.evidence+'</div>':''}</div>`;});}
+  if(d.people_intelligence&&d.people_intelligence.length){
+    h+='<div class="fy-sec">Your People</div>';
+    d.people_intelligence.forEach(p=>{const t=p.trajectory||"stable";
+      h+=`<div><div class="fy-pr"><span class="fy-pr-name">${p.name}</span><span class="fy-pr-rel">${p.relation||""}</span><span class="fy-pr-tr tr-${t}">${t}</span></div>${p.analysis?'<div class="fy-pr-an">'+p.analysis+'</div>':''}${p.action?'<div class="fy-pr-act">'+p.action+'</div>':''}</div>`;});}
+  if(d.goal_reality&&d.goal_reality.length){
+    h+='<div class="fy-sec">Goal Reality Check</div>';
+    d.goal_reality.forEach(g=>{const s=g.status||"just_started";
+      h+=`<div class="fy-gc"><div class="fy-gc-hd"><span class="fy-gc-name">${g.goal}</span><span class="fy-gc-st st-${s}">${s.replace(/_/g," ")}</span></div>${g.honest_assessment?'<div class="fy-gc-as">'+g.honest_assessment+'</div>':''}</div>`;});}
+  if(d.blind_spots&&d.blind_spots.length){
+    h+='<div class="fy-sec">Blind Spots</div>';
+    d.blind_spots.forEach(b=>{
+      h+=`<div class="fy-bl"><div class="fy-bl-tl">${b.title||b.type}</div><div class="fy-bl-txt">${b.insight}</div>${b.question?'<div class="fy-bl-q">"'+b.question+'"</div>':''}</div>`;});}
+  if(d.tomorrow_actions&&d.tomorrow_actions.length){
+    h+='<div class="fy-sec">Next 24 Hours</div>';
+    d.tomorrow_actions.forEach(a=>{const p=a.priority||"medium";
+      h+=`<div class="fy-act fy-act-${p}"><div class="fy-act-t">${a.time}</div><div><div class="fy-act-tx">${a.action}</div>${a.reason?'<div class="fy-act-r">'+a.reason+'</div>':''}</div></div>`;});}
+  if(d.suggestions&&d.suggestions.length){
+    h+='<div class="fy-sec">Suggested Conversations</div><div class="fy-chips">';
+    d.suggestions.forEach(s=>{h+=`<button class="fy-chip" onclick="fyChat('${s.replace(/'/g,"\\'")}')">${s}</button>`;});
+    h+='</div>';}
+  h+='</div>';el.innerHTML=h;
+}
+function fyChat(t){go("chat");document.getElementById("mi").value=t;send()}
+async function refreshFY(){
+  const el=document.getElementById("fy-content");
+  el.innerHTML='<div class="fy"><div class="fy-load"><div class="spin"></div><div class="fy-load-t">Regenerating deep analysis...</div><div class="fy-load-s">This takes 60-90 seconds</div></div></div>';
+  await api("POST","/api/foryou/refresh");await loadForYou();
 }
 
 /* ── Keys ── */
