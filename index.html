@@ -482,6 +482,9 @@ async function api(m,e,b){
   }catch(er){console.error("API:",er);return null}
 }
 
+/* ── Escaping ── */
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+
 /* ── Toast ── */
 function showToast(msg){
   let t=document.createElement("div");
@@ -664,52 +667,52 @@ async function loadProfile(){
   const d=await api("GET","/api/profile");if(!d)return;
   const b=document.getElementById("rp-b");
   const id=d.identity||{};
-  const name=id.name||"Unknown";
+  const name=esc(id.name||"Unknown");
   const init=name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
-  const occ=id.occupation||"";const co=id.company||"";
+  const occ=esc(id.occupation||"");const co=esc(id.company||"");
   const occLine=occ&&co?`${occ} @ ${co}`:occ||co||"";
   let h=`<div class="pf-top"><div class="pf-av">${init}</div><div class="pf-name">${name}</div><div class="pf-occ">${occLine}</div></div>`;
   // Mood
   const mc=moodCol(d.mood);
-  h+=`<div class="pf-row"><span class="k">Mood</span><span class="v" style="color:${mc}">${d.mood||"neutral"}</span></div>`;
+  h+=`<div class="pf-row"><span class="k">Mood</span><span class="v" style="color:${mc}">${esc(d.mood||"neutral")}</span></div>`;
   // Identity fields
   const fields=[["Location",id.location],["Education",id.education],["Age",id.age]];
-  h+=fields.map(([k,v])=>v?`<div class="pf-row"><span class="k">${k}</span><span class="v">${v}</span></div>`:"").join("");
+  h+=fields.map(([k,v])=>v?`<div class="pf-row"><span class="k">${k}</span><span class="v">${esc(v)}</span></div>`:"").join("");
   // People
   if(d.people&&d.people.length){
     h+='<div class="pf-sec">People</div>';
-    h+=d.people.map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="color:#fff;font-weight:500;font-size:14px">${p.name}</span><span style="font-size:11px;padding:2px 8px;border-radius:12px;background:rgba(139,92,246,.15);color:#8b5cf6">${p.relation||"known"}</span></div>`).join("");
+    h+=d.people.map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="color:#fff;font-weight:500;font-size:14px">${esc(p.name)}</span><span style="font-size:11px;padding:2px 8px;border-radius:12px;background:rgba(139,92,246,.15);color:#8b5cf6">${esc(p.relation||"known")}</span></div>`).join("");
   }
   // Work & Education
   if((d.work&&d.work.length)||(d.education&&d.education.length)){
     h+='<div class="pf-sec">Work & Education</div>';
-    (d.work||[]).forEach(w=>{h+=`<div class="pf-row"><span class="v">${w.name}</span><span class="k">${w.role}</span></div>`});
-    (d.education||[]).forEach(e=>{h+=`<div class="pf-row"><span class="v">${e.name}</span><span class="k">${e.relation}</span></div>`});
+    (d.work||[]).forEach(w=>{h+=`<div class="pf-row"><span class="v">${esc(w.name)}</span><span class="k">${esc(w.role)}</span></div>`});
+    (d.education||[]).forEach(e=>{h+=`<div class="pf-row"><span class="v">${esc(e.name)}</span><span class="k">${esc(e.relation)}</span></div>`});
   }
   // Likes
   if(d.likes&&d.likes.length){
     h+='<div class="pf-sec">Likes</div>';
-    h+=d.likes.map(l=>`<span class="pref-t pos">${l}</span>`).join("");
+    h+=d.likes.map(l=>`<span class="pref-t pos">${esc(l)}</span>`).join("");
   }
   // Dislikes
   if(d.dislikes&&d.dislikes.length){
     h+='<div class="pf-sec">Dislikes</div>';
-    h+=d.dislikes.map(l=>`<span class="pref-t neg">${l}</span>`).join("");
+    h+=d.dislikes.map(l=>`<span class="pref-t neg">${esc(l)}</span>`).join("");
   }
   // Goals
   if(d.goals&&d.goals.length){
     h+='<div class="pf-sec">Goals</div>';
-    h+=d.goals.map(g=>`<div class="pf-row"><span class="v">${g}</span></div>`).join("");
+    h+=d.goals.map(g=>`<div class="pf-row"><span class="v">${esc(g)}</span></div>`).join("");
   }
   // Health
   if(d.health&&d.health.length){
     h+='<div class="pf-sec">Health</div>';
-    h+=d.health.map(s=>`<div class="pf-row"><span class="v" style="color:var(--amber)">${s}</span></div>`).join("");
+    h+=d.health.map(s=>`<div class="pf-row"><span class="v" style="color:var(--amber)">${esc(s)}</span></div>`).join("");
   }
   // Events
   if(d.events&&d.events.length){
     h+='<div class="pf-sec">Events</div>';
-    h+=d.events.map(e=>`<div class="pf-row"><span class="v">${e.name}</span><span class="k">${e.when||""}</span></div>`).join("");
+    h+=d.events.map(e=>`<div class="pf-row"><span class="v">${esc(e.name)}</span><span class="k">${esc(e.when||"")}</span></div>`).join("");
   }
   b.innerHTML=h||'<div class="empty"><p>No profile data yet</p></div>';
 }
