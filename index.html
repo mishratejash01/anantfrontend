@@ -781,7 +781,7 @@ async function loadForYou(){
     const d=await api("GET","/api/foryou");
     if(!d){el.innerHTML='<div class="fy"><div style="text-align:center;padding:60px;color:#555">Could not connect to server.</div></div>';return}
     if(!d.life_pulse){el.innerHTML='<div class="fy"><div style="text-align:center;padding:60px;color:#555">Not enough data yet. Chat with Anant to build your life model.</div></div>';return}
-    const arr=x=>Array.isArray(x)?x:[];
+    const arr=x=>{if(Array.isArray(x))return x;if(typeof x==="string"){try{const p=JSON.parse(x);if(Array.isArray(p))return p}catch(e){}}return[]};
     const esc=s=>(s||"").replace(/</g,"&lt;").replace(/>/g,"&gt;");
     let h='<div class="fy">';
     h+=`<div class="fy-hd"><div class="fy-title">For You</div><div>${d.generated_at?'<span class="fy-meta">Updated '+timeAgo(d.generated_at)+'</span>':''}<button class="fy-ref" onclick="refreshFY()">&#8635; Refresh</button></div></div>`;
