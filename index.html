@@ -777,43 +777,52 @@ function timeAgo(iso){
 async function loadForYou(){
   const el=document.getElementById("fy-content");
   el.innerHTML='<div class="fy"><div class="fy-load"><div class="spin"></div><div class="fy-load-t">Anant is analyzing your life...</div><div class="fy-load-s">Running multi-pass reasoning</div></div></div>';
-  const d=await api("GET","/api/foryou");
-  if(!d||!d.life_pulse){el.innerHTML='<div class="fy"><div style="text-align:center;padding:60px;color:#555">Not enough data yet. Chat with Anant to build your life model.</div></div>';return}
-  let h='<div class="fy">';
-  h+=`<div class="fy-hd"><div class="fy-title">For You</div><div>${d.generated_at?'<span class="fy-meta">Updated '+timeAgo(d.generated_at)+'</span>':''}<button class="fy-ref" onclick="refreshFY()">↻ Refresh</button></div></div>`;
-  h+='<div class="fy-sec">Life Pulse</div>';
-  h+=`<div class="fy-pulse">${d.life_pulse}</div>`;
-  if(d.cross_domain_insights&&d.cross_domain_insights.length){
-    h+='<div class="fy-sec">What Anant Sees</div>';
-    d.cross_domain_insights.forEach(i=>{const s=i.severity||"low";
-      h+=`<div class="fy-card fy-card-${s==="high"?"hi":s==="medium"?"md":"lo"}"><div class="fy-card-dom">${(i.domains||[]).join(" × ").toUpperCase()}</div><div class="fy-card-txt">${i.insight}</div>${i.evidence?'<div class="fy-card-ev">'+i.evidence+'</div>':''}</div>`;});}
-  if(d.people_intelligence&&d.people_intelligence.length){
-    h+='<div class="fy-sec">Your People</div>';
-    d.people_intelligence.forEach(p=>{const t=p.trajectory||"stable";
-      h+=`<div><div class="fy-pr"><span class="fy-pr-name">${p.name}</span><span class="fy-pr-rel">${p.relation||""}</span><span class="fy-pr-tr tr-${t}">${t}</span></div>${p.analysis?'<div class="fy-pr-an">'+p.analysis+'</div>':''}${p.action?'<div class="fy-pr-act">'+p.action+'</div>':''}</div>`;});}
-  if(d.goal_reality&&d.goal_reality.length){
-    h+='<div class="fy-sec">Goal Reality Check</div>';
-    d.goal_reality.forEach(g=>{const s=g.status||"just_started";
-      h+=`<div class="fy-gc"><div class="fy-gc-hd"><span class="fy-gc-name">${g.goal}</span><span class="fy-gc-st st-${s}">${s.replace(/_/g," ")}</span></div>${g.honest_assessment?'<div class="fy-gc-as">'+g.honest_assessment+'</div>':''}</div>`;});}
-  if(d.blind_spots&&d.blind_spots.length){
-    h+='<div class="fy-sec">Blind Spots</div>';
-    d.blind_spots.forEach(b=>{
-      h+=`<div class="fy-bl"><div class="fy-bl-tl">${b.title||b.type}</div><div class="fy-bl-txt">${b.insight}</div>${b.question?'<div class="fy-bl-q">"'+b.question+'"</div>':''}</div>`;});}
-  if(d.tomorrow_actions&&d.tomorrow_actions.length){
-    h+='<div class="fy-sec">Next 24 Hours</div>';
-    d.tomorrow_actions.forEach(a=>{const p=a.priority||"medium";
-      h+=`<div class="fy-act fy-act-${p}"><div class="fy-act-t">${a.time}</div><div><div class="fy-act-tx">${a.action}</div>${a.reason?'<div class="fy-act-r">'+a.reason+'</div>':''}</div></div>`;});}
-  if(d.suggestions&&d.suggestions.length){
-    h+='<div class="fy-sec">Suggested Conversations</div><div class="fy-chips">';
-    d.suggestions.forEach(s=>{h+=`<button class="fy-chip" onclick="fyChat('${s.replace(/'/g,"\\'")}')">${s}</button>`;});
-    h+='</div>';}
-  h+='</div>';el.innerHTML=h;
+  try{
+    const d=await api("GET","/api/foryou");
+    if(!d){el.innerHTML='<div class="fy"><div style="text-align:center;padding:60px;color:#555">Could not connect to server.</div></div>';return}
+    if(!d.life_pulse){el.innerHTML='<div class="fy"><div style="text-align:center;padding:60px;color:#555">Not enough data yet. Chat with Anant to build your life model.</div></div>';return}
+    const arr=x=>Array.isArray(x)?x:[];
+    const esc=s=>(s||"").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    let h='<div class="fy">';
+    h+=`<div class="fy-hd"><div class="fy-title">For You</div><div>${d.generated_at?'<span class="fy-meta">Updated '+timeAgo(d.generated_at)+'</span>':''}<button class="fy-ref" onclick="refreshFY()">&#8635; Refresh</button></div></div>`;
+    h+='<div class="fy-sec">Life Pulse</div>';
+    h+=`<div class="fy-pulse">${esc(d.life_pulse)}</div>`;
+    const cdi=arr(d.cross_domain_insights);
+    if(cdi.length){h+='<div class="fy-sec">What Anant Sees</div>';
+      cdi.forEach(i=>{const s=i.severity||"low";
+        h+=`<div class="fy-card fy-card-${s==="high"?"hi":s==="medium"?"md":"lo"}"><div class="fy-card-dom">${esc((i.domains||[]).join(" × ")).toUpperCase()}</div><div class="fy-card-txt">${esc(i.insight)}</div>${i.evidence?'<div class="fy-card-ev">'+esc(i.evidence)+'</div>':''}</div>`;});}
+    const pi=arr(d.people_intelligence);
+    if(pi.length){h+='<div class="fy-sec">Your People</div>';
+      pi.forEach(p=>{const t=p.trajectory||"stable";
+        h+=`<div><div class="fy-pr"><span class="fy-pr-name">${esc(p.name)}</span><span class="fy-pr-rel">${esc(p.relation)}</span><span class="fy-pr-tr tr-${t}">${t}</span></div>${p.analysis?'<div class="fy-pr-an">'+esc(p.analysis)+'</div>':''}${p.action?'<div class="fy-pr-act">'+esc(p.action)+'</div>':''}</div>`;});}
+    const gr=arr(d.goal_reality);
+    if(gr.length){h+='<div class="fy-sec">Goal Reality Check</div>';
+      gr.forEach(g=>{const s=g.status||"just_started";
+        h+=`<div class="fy-gc"><div class="fy-gc-hd"><span class="fy-gc-name">${esc(g.goal)}</span><span class="fy-gc-st st-${s}">${s.replace(/_/g," ")}</span></div>${g.honest_assessment?'<div class="fy-gc-as">'+esc(g.honest_assessment)+'</div>':''}</div>`;});}
+    const bs=arr(d.blind_spots);
+    if(bs.length){h+='<div class="fy-sec">Blind Spots</div>';
+      bs.forEach(b=>{
+        h+=`<div class="fy-bl"><div class="fy-bl-tl">${esc(b.title||b.type||"Insight")}</div><div class="fy-bl-txt">${esc(b.insight)}</div>${b.question?'<div class="fy-bl-q">&ldquo;'+esc(b.question)+'&rdquo;</div>':''}</div>`;});}
+    const ta=arr(d.tomorrow_actions);
+    if(ta.length){h+='<div class="fy-sec">Next 24 Hours</div>';
+      ta.forEach(a=>{const p=a.priority||"medium";
+        h+=`<div class="fy-act fy-act-${p}"><div class="fy-act-t">${esc(a.time)}</div><div><div class="fy-act-tx">${esc(a.action)}</div>${a.reason?'<div class="fy-act-r">'+esc(a.reason)+'</div>':''}</div></div>`;});}
+    const sg=arr(d.suggestions);
+    if(sg.length){h+='<div class="fy-sec">Suggested Conversations</div><div class="fy-chips">';
+      sg.forEach((s,i)=>{h+=`<button class="fy-chip" onclick="fyChat(${i})">${esc(s)}</button>`;});
+      h+='</div>';}
+    h+='</div>';el.innerHTML=h;
+    window._fySuggestions=sg;
+  }catch(err){
+    console.error("For You render error:",err);
+    el.innerHTML='<div class="fy"><div style="padding:40px;color:var(--red)">Something went wrong rendering the analysis. Check console for details.</div></div>';
+  }
 }
-function fyChat(t){go("chat");document.getElementById("mi").value=t;send()}
+function fyChat(i){const sg=window._fySuggestions||[];const t=sg[i]||"";if(!t)return;go("chat");document.getElementById("mi").value=t;send()}
 async function refreshFY(){
   const el=document.getElementById("fy-content");
   el.innerHTML='<div class="fy"><div class="fy-load"><div class="spin"></div><div class="fy-load-t">Regenerating deep analysis...</div><div class="fy-load-s">This takes 60-90 seconds</div></div></div>';
-  await api("POST","/api/foryou/refresh");await loadForYou();
+  try{await api("POST","/api/foryou/refresh");await loadForYou();}catch(err){console.error("Refresh error:",err);el.innerHTML='<div class="fy"><div style="padding:40px;color:var(--red)">Refresh failed. Try again.</div></div>';}
 }
 
 /* ── Keys ── */
