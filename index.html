@@ -320,6 +320,23 @@ input,textarea{font-family:inherit;outline:none;border:none}
 
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
+/* ═══ CONVERSATION LIST ═══ */
+#conv-list{margin-top:12px;max-height:calc(100vh - 400px);overflow-y:auto}
+.conv-item{padding:10px 12px;border-radius:8px;cursor:pointer;position:relative;
+  margin-bottom:2px;transition:background .15s;border-left:2px solid transparent}
+.conv-item:hover{background:rgba(255,255,255,.04)}
+.conv-active{background:rgba(139,92,246,.1);border-left-color:#8b5cf6}
+.conv-title{font-size:13px;color:#e2e8f0;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;padding-right:20px}
+.conv-preview{font-size:11px;color:#555;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;margin-top:2px}
+.conv-delete{position:absolute;right:8px;top:10px;background:none;border:none;
+  color:#555;font-size:16px;cursor:pointer;display:none;padding:0 4px}
+.conv-item:hover .conv-delete{display:block}
+.conv-delete:hover{color:#ef4444}
+.conv-sep{font-size:11px;color:var(--text4);padding:8px 12px 4px;font-weight:600;
+  letter-spacing:.5px;text-transform:uppercase}
+
 /* ═══ MOBILE ═══ */
 @media(max-width:768px){
   #sb{position:fixed;left:0;top:0;bottom:0;z-index:55}
@@ -376,6 +393,8 @@ input,textarea{font-family:inherit;outline:none;border:none}
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>
       New Chat
     </button>
+    <div class="conv-sep">History</div>
+    <div id="conv-list"></div>
   </div>
   <nav class="sb-nav">
     <button class="sb-i on" data-v="chat" onclick="go('chat')">
@@ -462,7 +481,7 @@ input,textarea{font-family:inherit;outline:none;border:none}
 
 <script>
 const API_URL = "https://scoldedly-unfinical-julius.ngrok-free.dev";
-let authMode="login",persona="general";
+let authMode="login",persona="general",currentConversationId=null;
 
 /* ── API ── */
 async function api(m,e,b){
@@ -529,6 +548,7 @@ function showApp(){
   document.getElementById("sb-un").textContent=u;
   document.getElementById("sb-av").textContent=u[0].toUpperCase();
   document.getElementById("mi").focus();
+  loadConversations();
 }
 function logout(){sessionStorage.clear();resetChat();showLogin()}
 if(sessionStorage.getItem("anant_token")){showApp()}else{showLogin()}
@@ -556,7 +576,7 @@ function openP(t,fn){
   document.getElementById("rp").classList.add("open");fn();
 }
 function closeP(){document.getElementById("rp").classList.remove("open")}
-function newChat(){resetChat();go("chat")}
+function newChat(){currentConversationId=null;resetChat();go("chat");loadConversations()}
 
 /* ── Markdown ── */
 function md(t){
@@ -633,9 +653,13 @@ async function send(){
   const t=i.value.trim();if(!t)return;
   i.value="";i.style.height="auto";b.disabled=true;
   addMsg("user",t);showTyp();
-  const d=await api("POST","/api/chat",{message:t});
+  const d=await api("POST","/api/chat",{message:t,conversation_id:currentConversationId});
   hideTyp();b.disabled=false;
-  if(d&&d.response){addMsg("ai",d.response,d.thinking,d.persona);persona=d.persona||"general"}
+  if(d&&d.response){
+    addMsg("ai",d.response,d.thinking,d.persona);persona=d.persona||"general";
+    if(d.conversation_id)currentConversationId=d.conversation_id;
+    loadConversations();
+  }
   else if(d&&d.detail)addMsg("ai","Error: "+d.detail);
   else addMsg("ai","Sorry, could not connect to the server.");
   i.focus();
@@ -826,6 +850,48 @@ async function refreshFY(){
   const el=document.getElementById("fy-content");
   el.innerHTML='<div class="fy"><div class="fy-load"><div class="spin"></div><div class="fy-load-t">Regenerating deep analysis...</div><div class="fy-load-s">This takes 60-90 seconds</div></div></div>';
   try{await api("POST","/api/foryou/refresh");await loadForYou();}catch(err){console.error("Refresh error:",err);el.innerHTML='<div class="fy"><div style="padding:40px;color:var(--red)">Refresh failed. Try again.</div></div>';}
+}
+
+/* ── Conversations ── */
+async function loadConversations(){
+  const d=await api("GET","/api/conversations");if(!d)return;
+  const list=document.getElementById("conv-list");list.innerHTML="";
+  (d.conversations||[]).forEach(conv=>{
+    const div=document.createElement("div");
+    div.className="conv-item"+(conv.id===currentConversationId?" conv-active":"");
+    div.innerHTML=`<div class="conv-title">${esc(conv.title)}</div><div class="conv-preview">${esc(conv.preview)}</div><button class="conv-delete" onclick="event.stopPropagation();deleteConv('${conv.id}')">&times;</button>`;
+    div.onclick=()=>loadConversation(conv.id);
+    list.appendChild(div);
+  });
+}
+async function loadConversation(convId){
+  currentConversationId=convId;go("chat");
+  const d=await api("GET","/api/conversations/"+convId+"/messages");if(!d)return;
+  const msgs=document.getElementById("msgs");
+  msgs.innerHTML="";
+  const box=document.createElement("div");box.className="msgs-inner";
+  (d.messages||[]).forEach(msg=>{
+    const el=document.createElement("div");el.className="m";
+    if(msg.role==="user"){
+      el.classList.add("m-u");
+      el.innerHTML=`<div class="m-u-b">${md(msg.content)}</div>`;
+    }else{
+      el.classList.add("m-a");
+      let th="";
+      if(msg.thinking){th=`<div class="think-t" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>Thought process</div><div class="think-c">${md(msg.thinking)}</div>`;}
+      el.innerHTML=`<div class="m-a-label">Anant</div>${th}<div class="m-a-body">${md(msg.content)}</div>`;
+      if(msg.persona)setPill(msg.persona);
+    }
+    box.appendChild(el);
+  });
+  msgs.appendChild(box);scrollB();
+  loadConversations();
+}
+async function deleteConv(convId){
+  if(!confirm("Delete this conversation?"))return;
+  await api("DELETE","/api/conversations/"+convId);
+  if(currentConversationId===convId){currentConversationId=null;resetChat();}
+  loadConversations();
 }
 
 /* ── Keys ── */
